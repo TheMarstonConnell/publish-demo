@@ -45,6 +45,27 @@ h1 {
   line-height: 1.1;
 }
 
+.filename {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  max-width: 200px;
+  text-align: left;
+}
+
+.fid {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  max-width: 300px;
+  text-align: left;
+  cursor: pointer;
+}
+
+td {
+  padding-left: 20px;
+}
+
 button {
   border-radius: 8px;
   border: 1px solid transparent;

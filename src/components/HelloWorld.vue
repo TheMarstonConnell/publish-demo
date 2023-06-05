@@ -113,6 +113,7 @@ const count = ref(0)
 let fid = ref("waiting for upload...")
 
 let wallet = ref({})
+let data = ref([])
 
 let fileIo = null
 
@@ -138,6 +139,26 @@ const connectWallet = async function() {
 
   // after the first time, this code can be used instead. this will only create new folders if they don't already exist
   const newFolderCount = await fileIo.verifyFoldersExist(listOfFolders)
+
+  const listFiles = await fileIo.downloadFolder("s/publish-demo")
+  const files = listFiles.folderDetails.fileChildren
+
+  let d = []
+
+  let x = 0
+  for (const key of Object.keys(files)) {
+    const f = files[key]
+
+    const fDetails = await getFileTreeData("s/publish-demo/" + f.name, wallet.value.getJackalAddress(), wallet.value.getQueryHandler())
+    const fidList = JSON.parse(fDetails.value.files.contents)
+    const newFid = fidList.fids[0]
+
+    d[x] = {name: key, fid: newFid}
+    x ++
+  }
+  console.log(d)
+  data.value = d
+
   console.log(newFolderCount)
 }
 
@@ -181,6 +202,10 @@ const goToFID = function () {
  window.open(`https://jackal.link/f/${fid.value}`, '_blank')
 }
 
+const open = function (fff) {
+  window.open(`https://jackal.link/f/${fff}`, '_blank')
+}
+
 
 </script>
 
@@ -197,6 +222,23 @@ const goToFID = function () {
         <button v-if="fid.startsWith('jklf')" @click="goToFID">Check it out!</button>
       </div>
   </div>
+
+  <table class="table table-striped">
+  <thead>
+    <tr>
+      <th>File Name</th>
+      <th>FID</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr v-for="item in data" :key="item.name">
+       <th scope="row" class="filename">{{ item.name  }}</th>  
+       <td class="fid" @click="function () {
+          open(item.fid)
+        }">{{ item.fid }}</td> 
+    </tr>
+   </tbody>
+</table>
 
   
 </template>
